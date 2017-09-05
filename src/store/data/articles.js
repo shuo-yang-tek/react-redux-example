@@ -15,13 +15,20 @@ export function reducer(state = DEFAULT_STATE, action) {
 
    switch(action.type) {
    case ACTION_TYPES.add:
-      newList.push(action.context);
+      newList.push({
+         title: action.title,
+         context: action.context,
+         createAtJSON: action.createAtJSON
+      });
       break;
    case ACTION_TYPES.remove:
       newList.splice(action.index, 1);
       break;
    case ACTION_TYPES.update:
-      newList[action.index] = action.context;
+      newList[action.index] = Object.assign({}, newList[action.index], {
+         title: action.title,
+         context: action.context
+      });
       break;
    default:
       return state;
@@ -31,17 +38,20 @@ export function reducer(state = DEFAULT_STATE, action) {
 }
 
 export const Actions = {
-   add: context => ({
+   add: (title, context, createAtJSON) => ({
       type: ACTION_TYPES.add,
-      context
+      title,
+      context,
+      createAtJSON
    }),
    remove: index => ({
       type: ACTION_TYPES.remove,
       index
    }),
-   update: (index, context) => ({
+   update: (index, title, context) => ({
       type: ACTION_TYPES.update,
       index,
+      title,
       context
    })
 };

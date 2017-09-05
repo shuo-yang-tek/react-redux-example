@@ -9,10 +9,19 @@ class Editor extends Component {
       super(props);
 
       this._onSubmitClick = this._onSubmitClick.bind(this);
-      this._onChange = this._onChange.bind(this);
+      this._onTitleChange = this._onTitleChange.bind(this);
+      this._onContextChange = this._onContextChange.bind(this);
    }
 
-   _onChange(evt) {
+   _onTitleChange(evt) {
+      const {
+         setEditorTitle
+      } = this.props;
+
+      setEditorTitle(evt.target.value);
+   }
+
+   _onContextChange(evt) {
       const {
          setEditorContext
       } = this.props;
@@ -30,9 +39,9 @@ class Editor extends Component {
       } = this.props;
 
       if( list[editor.indexOfList] )
-         updateArticle(editor.indexOfList, editor.context);
+         updateArticle(editor.indexOfList, editor.title, editor.context);
       else
-         addArticle(editor.context);
+         addArticle(editor.title, editor.context, editor.createAtJSON);
 
       hideEditor();
    }
@@ -47,12 +56,22 @@ class Editor extends Component {
 
       return (
          <div style={ styles.root }>
+            <p>
+               { (new Date(editor.createAtJSON)).toString() }
+            </p>
+            <input
+               type='text'
+               value={ editor.title }
+               placeholder='Title'
+               style={ styles.input }
+               onChange={ this._onTitleChange }
+            />
             <input
                type='text'
                value={ editor.context }
+               placeholder='Context'
                style={ styles.input }
-               ref='input'
-               onChange={ this._onChange }
+               onChange={ this._onContextChange }
             />
             <button
                style={ styles.button }
@@ -68,8 +87,10 @@ class Editor extends Component {
 const styles = {
    root: {
       width: '100%',
-      paddingTop: 50,
-      textAlign: 'right'
+      marginTop: 50,
+      textAlign: 'right',
+      boxSizing: 'border-box',
+      border: '1px solid'
    },
    input: {
       width: '100%'
@@ -85,9 +106,10 @@ export default connect(
       editor: state.ui.editor
    }),
    dispatch => ({
-      addArticle: context => dispatch(articlesActions.add(context)),
-      updateArticle: (index, context) => dispatch(articlesActions.update(index, context)),
+      addArticle: (title, context, createAtJSON) => dispatch(articlesActions.add(title, context, createAtJSON)),
+      updateArticle: (index, title, context) => dispatch(articlesActions.update(index, title, context)),
       hideEditor: () => dispatch(editorActions.setVisibility(false)),
+      setEditorTitle: title => dispatch(editorActions.setTitle(title)),
       setEditorContext: context => dispatch(editorActions.setContext(context))
    })
 )(Editor);

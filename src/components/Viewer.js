@@ -22,11 +22,17 @@ class Viewer extends Component {
          list,
          showEditor,
          setEditorIndex,
-         setEditorContext
+         setEditorTitle,
+         setEditorContext,
+         setEditorCreateAt
       } = this.props;
 
+      const article = list[index];
+
       setEditorIndex(index);
-      setEditorContext(list[index]);
+      setEditorTitle(article.title);
+      setEditorContext(article.context);
+      setEditorCreateAt(article.createAtJSON);
       showEditor();
    }
 
@@ -34,11 +40,15 @@ class Viewer extends Component {
       const {
          showEditor,
          setEditorIndex,
-         setEditorContext
+         setEditorTitle,
+         setEditorContext,
+         setEditorCreateAt
       } = this.props;
 
       setEditorIndex(-1);
+      setEditorTitle('');
       setEditorContext('');
+      setEditorCreateAt((new Date()).toJSON());
       showEditor();
    }
 
@@ -47,14 +57,20 @@ class Viewer extends Component {
          list
       } = this.props;
 
-      const items = list.map((context, index) => (
+      const items = list.map((article, index) => (
          <div
             style={ styles.itemBox }
             key={`item-${index}`}
          >
-            <p style={ styles.itemContext }>
-               { context }
+            <p>
+               { (new Date(article.createAtJSON)).toString() }
             </p>
+            <h1>
+               { article.title }
+            </h1>
+            <h3>
+               { article.context }
+            </h3>
             <button
                style={ styles.itemButton }
                onClick={() => this._onUpdateClick(index)}
@@ -67,6 +83,7 @@ class Viewer extends Component {
             >
                Remove
             </button>
+            <hr />
          </div>
       ));
 
@@ -97,18 +114,15 @@ class Viewer extends Component {
 
 const styles = {
    root: {
-      width: '100%'
+      width: '100%',
+      boxSizing: 'border-box',
+      border: '1px solid'
    },
    itemBox: {
       width: '100%',
-      paddingBottom: 20
-   },
-   itemContext: {
-      width: '50%',
-      display: 'inline-block'
    },
    itemButton: {
-      width: '25%',
+      width: '50%',
       display: 'inline-block'
    },
    addButton: {
@@ -128,6 +142,8 @@ export default connect(
       removeArticle: index => dispatch(articlesActions.remove(index)),
       showEditor: () => dispatch(editorActions.setVisibility(true)),
       setEditorIndex: indexOfList => dispatch(editorActions.setIndexOfList(indexOfList)),
-      setEditorContext: context => dispatch(editorActions.setContext(context))
+      setEditorTitle: title => dispatch(editorActions.setTitle(title)),
+      setEditorContext: context => dispatch(editorActions.setContext(context)),
+      setEditorCreateAt: createAtJSON => dispatch(editorActions.setCreateAt(createAtJSON))
    })
 )(Viewer);
