@@ -27,7 +27,7 @@ export function reducer(state = DEFAULT_STATE, action) {
    case ACTION_TYPES.setContext:
       return Object.assign({}, state, { context: action.context });
    case ACTION_TYPES.setCreateAt:
-      return Object.assign({}, state, { createAt: action.createAtJSON });
+      return Object.assign({}, state, { createAtJSON: action.createAtJSON });
    default:
       return state;
    }
